@@ -2,6 +2,8 @@ import { NavLink, Route, Routes } from 'react-router-dom';
 import { Dashboard } from './routes/Dashboard';
 import { Loans } from './routes/Loans';
 import { LoanDetail } from './routes/LoanDetail';
+import { LoanNew } from './routes/LoanNew';
+import { LoanEdit } from './routes/LoanEdit';
 import { Import } from './routes/Import';
 import { Analytics } from './routes/Analytics';
 import { Tax } from './routes/Tax';
@@ -26,7 +28,9 @@ export function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/loans" element={<Loans />} />
+          <Route path="/loans/new" element={<LoanNew />} />
           <Route path="/loans/:id" element={<LoanDetail />} />
+          <Route path="/loans/:id/edit" element={<LoanEdit />} />
           <Route path="/import" element={<Import />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/tax" element={<Tax />} />
