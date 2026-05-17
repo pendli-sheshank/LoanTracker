@@ -7,6 +7,7 @@ import { Tabs } from '@/components/ui/Tabs';
 import { AmortizationChart } from '@/components/loan/AmortizationChart';
 import { AmortizationTable } from '@/components/loan/AmortizationTable';
 import { PrepaySimulator } from '@/components/loan/PrepaySimulator';
+import { PaymentHistory } from '@/components/loan/PaymentHistory';
 import { buildSchedule, summarize } from '@/domain/loan/amortization';
 import { formatINR } from '@/lib/money';
 
@@ -56,6 +57,7 @@ export function LoanDetail() {
       { id: 'prepay', label: 'Prepay simulator', content: <PrepaySimulator loan={loan} /> },
     );
   }
+  tabs.push({ id: 'payments', label: 'Payments', content: <PaymentHistory loan={loan} /> });
 
   return (
     <section className="space-y-4">
