@@ -5,33 +5,50 @@ Rolling session state. Updated at end of every session and before any context co
 ---
 
 lastUpdated: 2026-05-17
-phase: M0 complete — moving to M1 (core loan CRUD)
-currentTask: None — M0 scaffold done, committed as `eaf6a97`
-nextStep: Begin M1 — implement loan CRUD: Zod schemas per loan type, RHF form (stepper for housing/credit-card), Dexie repo + TanStack Query hooks, Loans list with progress bar, INR formatting at edge
+phase: M3.5 complete — through full v1 feature set (CRUD, amortization, payments, import). Next is M4/M5 (suggestions, analytics, tax).
+currentTask: None — clean working tree
+nextStep: Pick from queue — (a) M4 prepayment-suggestions rule engine on Dashboard, (b) M5 analytics/tax screens (portfolio mix, FY tax summary with 80C/24b/80E), (c) M6 settings polish + encrypted backup/restore, (d) bundle code-splitting (recharts + xlsx) to drop main chunk below 500 KB.
 turnsSinceCompaction: 0
 
 inFlightFiles:
-- (none — clean working tree)
+- (none — all M0–M3.5 work committed)
 
 decisionsThisSession:
-- M0 stack locked in: Vite 5 + React 18 + TS strict + Tailwind + Dexie + vite-plugin-pwa.
-- Path alias `@/*` → `src/*` configured in tsconfig + vite.
-- Vitest with `fake-indexeddb` + jsdom; setup file at `tests/setup.ts`.
-- EMI formula committed and verified against HDFC sample (₹10L @ 8.5% / 20y → ₹8,678/mo).
-- `*.tsbuildinfo` gitignored.
+- Skipped shadcn/ui in favour of plain Tailwind primitives (Button/Field/Input/Select/Tabs) to keep momentum. Can swap later if desired.
+- Skipped Tesseract.js OCR fallback for v1 import — too heavy (10 MB). Can add lazy-load later for scanned PDFs.
+- Used dexie-react-hooks `useLiveQuery` for reads instead of TanStack Query — simpler, auto-reactive to writes. TanStack Query reserved for v2 Supabase sync.
+- pdf.js code-split via dynamic import — only loaded when user uploads a PDF.
+- Newton-Raphson rate solver with first-row interest fallback for ill-conditioned schedules.
 
 openQuestionsForUser:
-- Approve M1 scope, or pivot to M3.5 (doc import) first? Import is the highest-value differentiator and lets users skip manual data entry from day one.
+- Next milestone preference: M4 (suggestions) vs M5 (analytics/tax) vs bundle optimization?
 - Supabase auth: magic-link vs Google OAuth? (defer until v2)
 - Ship sample/demo data on first launch?
-- iOS: stay PWA-only or plan Capacitor wrap later?
+- Lender presets (HDFC/SBI/ICICI/Axis/Bajaj) for one-click column mapping — implement now or wait for real user files?
 
 recentDecisionsLog:
 - 2026-05-16 — Swapped Firebase for Supabase per user.
 - 2026-05-16 — Added amortization-doc import feature + dedicated milestone M3.5.
 - 2026-05-17 — Authored CONTEXT.md, SKILLS.md, STATE.md; established compaction cadence (every 10–15 turns).
-- 2026-05-17 — M0 scaffold complete; typecheck, 3/3 tests, and production PWA build all green; initial commit `eaf6a97`.
+- 2026-05-17 — M0 scaffold complete; commit `eaf6a97`.
+- 2026-05-17 — M1 loan CRUD complete; Zod discriminated union, Dexie repo, live-reactive list/forms.
+- 2026-05-17 — M2 amortization complete; build/summarize/prepay engines + chart/table/simulator + 7 tests.
+- 2026-05-17 — M3 payments complete; auto-split interest-first reconciliation against schedule + 4 tests.
+- 2026-05-17 — M3.5 doc import complete; XLSX/CSV/PDF parsers, fuzzy column mapping, Newton-Raphson rate inference, 4-step UI, 12 tests.
+
+testCoverage:
+- 5 test files, 29 tests passing
+- Domain layer: emi (3), money (3), amortization (7), payment-split (4), import (12)
 
 buildArtifacts:
-- dist/index.html, dist/sw.js, dist/manifest.webmanifest — 206 KiB precache, 7 entries
-- Bundle: 197.69 kB JS (gzip 63.56 kB), 6.75 kB CSS (gzip 1.92 kB)
+- Main bundle: 1168 KB JS (mostly Recharts + SheetJS)
+- PDF chunk (lazy): 442 KB
+- Service worker precaches 8 entries (1.6 MB)
+
+knownDeferrals:
+- Tesseract.js OCR for scanned PDFs — lazy-load if/when needed
+- Web Worker for heavy schedule recomputes (PLAN.md M2 nice-to-have)
+- shadcn/ui swap-in
+- Code-splitting Recharts + SheetJS to bring main bundle under 500 KB
+- Storing computed amortization rows in IDB by default (currently only stored from imports)
+- Floating-rate / pre-EMI / foreclosure row handling in imports
